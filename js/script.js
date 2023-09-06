@@ -162,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
   div.render() // Вызываем метод render для создания и добавления элемента в DOM
 
   // FORMS
-
   const forms = document.querySelectorAll('form')
 
   const message = {
@@ -184,29 +183,16 @@ document.addEventListener('DOMContentLoaded', () => {
       statusMessage.textContent = message.loading
       form.append(statusMessage)
 
-      
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
 
-      request.setRequestHeader(
-        'Content-type',
-        // 'application/x-www-form-urlencoded'
-        'application / json'
-      )
+      const formData = new FormData(form)
 
+      request.setRequestHeader('Content-Type', 'application/json')
 
-      
-      const object = {}
-      formData.forEach(function (value, key) {
-        object[key] = value
-      })
-
-      const json = JSON.stringify(object)
+      const json = JSON.stringify(formData)
 
       request.send(json)
-      const formData = new URLSearchParams(new FormData(form)).toString()
-
-      request.send(formData)
 
       request.addEventListener('load', () => {
         if (request.status === 200) {
