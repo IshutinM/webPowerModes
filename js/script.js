@@ -186,12 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
 
-      // request.setRequestHeader('Content-Type', 'application/json')
-
-      // const json = JSON.stringify(formData)
+      request.setRequestHeader('Content-Type', 'application/json')
       const formData = new FormData(form)
 
-      request.send(formData)
+      const object = {}
+      formData.forEach(function (value, key) {
+        object[key] = value
+      })
+      const json = JSON.stringify(object)
+
+      request.send(json)
+
+      // request.send(formData)
 
       request.addEventListener('load', () => {
         if (request.status === 200) {
