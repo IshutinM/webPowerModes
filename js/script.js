@@ -186,13 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
 
+      // request.setRequestHeader('Content-Type', 'application/json')
+
+      // const json = JSON.stringify(formData)
       const formData = new FormData(form)
 
-      request.setRequestHeader('Content-Type', 'application/json')
-
-      const json = JSON.stringify(formData)
-
-      request.send(json)
+      request.send(formData)
 
       request.addEventListener('load', () => {
         if (request.status === 200) {
@@ -207,9 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
 
-      request.addEventListener('error', () => {
-        statusMessage.textContent = message.failure
-      })
+      // request.addEventListener('error', () => {
+      //   statusMessage.textContent = message.failure
+      // })
     })
   }
 })
