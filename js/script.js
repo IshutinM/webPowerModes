@@ -1,12 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const tabs = document.querySelectorAll('.tabheader__item'),
-    tabContent = document.querySelectorAll('.tabcontent'),
-    tabsParent = document.querySelector('.tabheader__items ')
+window.addEventListener('DOMContentLoaded', function () {
+  // Tabs
 
-  //tabcontent
+  let tabs = document.querySelectorAll('.tabheader__item'),
+    tabsContent = document.querySelectorAll('.tabcontent'),
+    tabsParent = document.querySelector('.tabheader__items')
 
-  function hideTabComtant() {
-    tabContent.forEach((item) => {
+  function hideTabContent() {
+    tabsContent.forEach((item) => {
       item.classList.add('hide')
       item.classList.remove('show', 'fade')
     })
@@ -17,34 +17,82 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showTabContent(i = 0) {
-    tabContent[i].classList.add('show', 'fade')
-    tabContent[i].classList.remove('hide')
-
+    tabsContent[i].classList.add('show', 'fade')
+    tabsContent[i].classList.remove('hide')
     tabs[i].classList.add('tabheader__item_active')
   }
 
-  hideTabComtant()
+  hideTabContent()
   showTabContent()
 
-  tabsParent.addEventListener('click', (event) => {
+  tabsParent.addEventListener('click', function (event) {
     const target = event.target
-
     if (target && target.classList.contains('tabheader__item')) {
       tabs.forEach((item, i) => {
         if (target == item) {
-          hideTabComtant()
+          hideTabContent()
           showTabContent(i)
         }
       })
     }
   })
 
-  //   modal
-  const modal = document.querySelector('.modal'),
-    modalTrigger = document.querySelectorAll('[data-modal]'),
-    modalCloseBtn = document.querySelector('[data-close]')
+  // Timer
 
-  function modalClose() {
+  const deadline = '2022-06-11'
+
+  function getTimeRemaining(endtime) {
+    const t = Date.parse(endtime) - Date.parse(new Date()),
+      days = Math.floor(t / (1000 * 60 * 60 * 24)),
+      seconds = Math.floor((t / 1000) % 60),
+      minutes = Math.floor((t / 1000 / 60) % 60),
+      hours = Math.floor((t / (1000 * 60 * 60)) % 24)
+
+    return {
+      total: t,
+      days: days,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    }
+  }
+
+  function getZero(num) {
+    if (num >= 0 && num < 10) {
+      return '0' + num
+    } else {
+      return num
+    }
+  }
+
+  function setClock(selector, endtime) {
+    const timer = document.querySelector(selector),
+      days = timer.querySelector('#days'),
+      hours = timer.querySelector('#hours'),
+      minutes = timer.querySelector('#minutes'),
+      seconds = timer.querySelector('#seconds'),
+      timeInterval = setInterval(updateClock, 1000)
+
+    updateClock()
+
+    function updateClock() {
+      const t = getTimeRemaining(endtime)
+
+      days.innerHTML = getZero(t.days)
+      hours.innerHTML = getZero(t.hours)
+      minutes.innerHTML = getZero(t.minutes)
+      seconds.innerHTML = getZero(t.seconds)
+
+      if (t.total <= 0) {
+        clearInterval(timeInterval)
+      }
+    }
+  }
+
+  setClock('.timer', deadline)
+
+  // Modal
+  function closeModal() {
     modal.classList.add('hide')
     modal.classList.remove('show')
     document.body.style.overflow = ''
@@ -54,139 +102,143 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.classList.add('show')
     modal.classList.remove('hide')
     document.body.style.overflow = 'hidden'
-
     clearInterval(modalTimerId)
   }
-  modalTrigger.forEach((item) => {
-    item.addEventListener('click', openModal)
+
+  const modalTrigger = document.querySelectorAll('[data-modal]'),
+    modal = document.querySelector('.modal')
+
+  modalTrigger.forEach((btn) => {
+    btn.addEventListener('click', openModal)
   })
-  modalCloseBtn.addEventListener('click', modalClose)
 
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modalClose()
+    if (e.target === modal || e.target.getAttribute('data-close') == '') {
+      closeModal()
     }
   })
 
   document.addEventListener('keydown', (e) => {
-    if (e.code == 'Escape' && modal.classList.contains('show')) {
-      modalClose()
+    if (e.code === 'Escape' && modal.classList.contains('show')) {
+      closeModal()
     }
   })
 
-  const modalTimerId = setTimeout(openModal, 2000)
+  const modalTimerId = setTimeout(openModal, 300000)
+  // Изменил значение, чтобы не отвлекало
 
   function showModalByScroll() {
     if (
-      window.scrollY + document.documentElement.clientHeight >=
+      window.pageYOffset + document.documentElement.clientHeight >=
       document.documentElement.scrollHeight
     ) {
       openModal()
       window.removeEventListener('scroll', showModalByScroll)
     }
   }
-
   window.addEventListener('scroll', showModalByScroll)
 
+  // Используем классы для создание карточек меню
+
   class MenuCard {
-    constructor(
-      imageSrc,
-      subtitle,
-      description,
-      price,
-      transfer,
-      parentSelector
-    ) {
-      this.imageSrc = imageSrc
-      this.subtitle = subtitle
-      this.description = description
+    constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+      this.src = src
+      this.alt = alt
+      this.title = title
+      this.descr = descr
       this.price = price
+      this.classes = classes
       this.parent = document.querySelector(parentSelector)
-      this.transfer = transfer
-      this.changeToUA()
+      this.transfer = 27
+      this.changeToUAH()
     }
 
-    changeToUA() {
+    changeToUAH() {
       this.price = this.price * this.transfer
     }
 
     render() {
       const element = document.createElement('div')
+
+      if (this.classes.length === 0) {
+        this.classes = 'menu__item'
+        element.classList.add(this.classes)
+      } else {
+        this.classes.forEach((className) => element.classList.add(className))
+      }
+
       element.innerHTML = `
-        <div class="menu__item">
-          <img src="${this.imageSrc}" alt="${this.subtitle}" />
-          <h3 class="menu__item-subtitle">${this.subtitle}</h3>
-          <div class="menu__item-descr">${this.description}</div>
-          <div class="menu__item-divider"></div>
-          <div class="menu__item-price">
-            <div class="menu__item-cost">Цена:</div>
-            <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-          </div>
-        </div>
-      `
+              <img src=${this.src} alt=${this.alt}>
+              <h3 class="menu__item-subtitle">${this.title}</h3>
+              <div class="menu__item-descr">${this.descr}</div>
+              <div class="menu__item-divider"></div>
+              <div class="menu__item-price">
+                  <div class="menu__item-cost">Цена:</div>
+                  <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+              </div>
+          `
       this.parent.append(element)
     }
   }
 
-  const div = new MenuCard(
+  new MenuCard(
     'img/tabs/vegy.jpg',
-    "Меню 'Фитнес'",
-    "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
-    229, // Это значение цены без умножения на transfer
-    2.65,
+    'vegy',
+    'Меню "Фитнес"',
+    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    9,
     '.menu .container'
-    // Родительский селектор
-  )
-  const premiumMenu = new MenuCard(
-    'img/tabs/elite.jpg',
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    550,
-    2.65, // Предположим, что это коэффициент для конвертации валюты
-    '.menu .container' // Предположим, что это селектор родительского элемента
-  )
+  ).render()
 
-  const postMenu = new MenuCard(
+  new MenuCard(
     'img/tabs/post.jpg',
+    'post',
     'Меню "Постное"',
     'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    420, // Предположим, что это цена без конвертации
-    2.65, // Предположим, что это коэффициент для конвертации валюты
-    '.menu .container' // Предположим, что это селектор родительского элемента
-  )
+    14,
+    '.menu .container'
+  ).render()
 
-  // Вызов метода render для каждой из созданных карточек
-  premiumMenu.render()
-  postMenu.render()
+  new MenuCard(
+    'img/tabs/elite.jpg',
+    'elite',
+    'Меню “Премиум”',
+    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+    21,
+    '.menu .container'
+  ).render()
 
-  div.render() // Вызываем метод render для создания и добавления элемента в DOM
+  // Forms
 
-  // FORMS
   const forms = document.querySelectorAll('form')
-
   const message = {
-    loading: 'Загрузка',
-    success: 'Спасибо, скоро мы с Вами свяжемся',
+    loading: 'img/form/054 spinner.svg',
+    success: 'Спасибо! Скоро мы с вами свяжемся',
     failure: 'Что-то пошло не так...',
   }
 
-  forms.forEach((form) => {
-    postData(form)
+  forms.forEach((item) => {
+    postData(item)
   })
 
   function postData(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault()
 
-      const statusMessage = document.createElement('div')
-      statusMessage.classList.add('status')
-      statusMessage.textContent = message.loading
-      form.append(statusMessage)
+      let statusMessage = document.createElement('img')
+      statusMessage.src = message.loading
+      statusMessage.style.cssText = `
+              display: block;
+              margin: 0 auto;
+          `
+      form.insertAdjacentElement('afterend', statusMessage)
 
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
-
-      request.setRequestHeader('Content-Type', 'application/json')
+      request.setRequestHeader(
+        'Content-type',
+        'application/json; charset=utf-8'
+      )
       const formData = new FormData(form)
 
       const object = {}
@@ -197,24 +249,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
       request.send(json)
 
-      // request.send(formData)
-
       request.addEventListener('load', () => {
         if (request.status === 200) {
           console.log(request.response)
-          statusMessage.textContent = message.success
+          showThanksModal(message.success)
+          statusMessage.remove()
           form.reset()
-          setTimeout(() => {
-            statusMessage.remove()
-          }, 2000)
         } else {
-          statusMessage.textContent = message.failure
+          showThanksModal(message.failure)
         }
       })
-
-      // request.addEventListener('error', () => {
-      //   statusMessage.textContent = message.failure
-      // })
     })
+  }
+
+  function showThanksModal(message) {
+    const prevModalDialog = document.querySelector('.modal__dialog')
+
+    prevModalDialog.classList.add('hide')
+    openModal()
+
+    const thanksModal = document.createElement('div')
+    thanksModal.classList.add('modal__dialog')
+    thanksModal.innerHTML = `
+          <div class="modal__content">
+              <div class="modal__close" data-close>×</div>
+              <div class="modal__title">${message}</div>
+          </div>
+      `
+    document.querySelector('.modal').append(thanksModal)
+    setTimeout(() => {
+      thanksModal.remove()
+      prevModalDialog.classList.add('show')
+      prevModalDialog.classList.remove('hide')
+      closeModal()
+    }, 4000)
   }
 })
