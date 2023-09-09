@@ -173,8 +173,8 @@ window.addEventListener('DOMContentLoaded', function () {
               <div class="menu__item-descr">${this.descr}</div>
               <div class="menu__item-divider"></div>
               <div class="menu__item-price">
-                  <div class="menu__item-cost">Цена:</div>
-                  <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                  <div class="menu__item-cost">Price:</div>
+                  <div class="menu__item-total"><span>${this.price}</span> UAH/day</div>
               </div>
           `
       this.parent.append(element)
@@ -184,8 +184,8 @@ window.addEventListener('DOMContentLoaded', function () {
   new MenuCard(
     'img/tabs/vegy.jpg',
     'vegy',
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    'Fitness Menu',
+    'The "Fitness Menu" is a new approach to cooking: more fresh vegetables and fruits. Its a product for active and healthy people. Its an entirely new product with optimal pricing and high quality!',
     9,
     '.menu .container'
   ).render()
@@ -193,8 +193,8 @@ window.addEventListener('DOMContentLoaded', function () {
   new MenuCard(
     'img/tabs/post.jpg',
     'post',
-    'Меню "Постное"',
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+    'Vegetarian Menu',
+    'The "Vegetarian Menu" is a careful selection of ingredients: no animal products, almond, oat, coconut, or buckwheat milk, the right amount of protein through tofu and imported vegetarian steaks.',
     14,
     '.menu .container'
   ).render()
@@ -202,8 +202,8 @@ window.addEventListener('DOMContentLoaded', function () {
   new MenuCard(
     'img/tabs/elite.jpg',
     'elite',
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+    'Premium Menu',
+    'In the "Premium Menu," we not only use beautiful packaging design but also ensure high-quality execution of dishes. Red fish, seafood, fruits - a restaurant menu without going to a restaurant!',
     21,
     '.menu .container'
   ).render()
